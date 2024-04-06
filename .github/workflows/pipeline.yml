@@ -2,9 +2,9 @@ name: Build, Test, and Deploy
 
 on:
   push:
-    branches: [ "main" ] 
+    branches: [ "main" ]    # Събитията, на които да реагира (пушване в main)
   pull_request:
-    branches: [ "main" ]    
+    branches: [ "main" ]    # Събитията, на които да реагира (pull request за main)
 
 jobs:
   build_unit_test:
@@ -21,7 +21,22 @@ jobs:
     - name: Install the Dependencies
       run: npm install           # Инсталиране на зависимостите
     - name: Run Unit tests
-      run: npm run test:unit         # Изпълнение на unit тестове
+      run: npm run test:unit     # Изпълнение на unit тестове
     - name: Display SoftUni username
-      run: echo "AneVG"         # Изпълнение на unit тестове
+      run: echo "AneVG"          # Извеждане на потребителско име от SoftUni
 
+  ui_tests:
+    runs-on: ubuntu-latest   # Определя средата, в която да се изпълнява
+    needs: build_unit_test   # Изисква успешно завършване на предходния job
+    steps:
+    - name: Checkout Repository on the machine
+      uses: actions/checkout@v4   # Стъпка за изтегляне на кода от хранилището
+    - name: Use Node.js version 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x       # Задаване на версия на Node.js
+        cache: 'npm'             # Кеширане на npm пакетите
+    - name: Install the Dependencies
+      run: npm install           # Инсталиране на зависимостите
+    - name: Run UI tests
+      run: npm run test:ui       # Изпълнение на UI тестове
